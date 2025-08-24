@@ -10,6 +10,9 @@ on:
       - master
       - next
 
+permissions:
+  contents: read
+
 jobs:
   lint:
     name: Lint - ${{ matrix.os }} - Node v${{ matrix.node-version }}
@@ -20,23 +23,24 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node-version: [12.x]
+        node-version: [lts/*]
 
     runs-on: ${{ matrix.os }}
 
+    concurrency:
+      group: lint-${{ matrix.os }}-v${{ matrix.node-version }}-${{ github.ref }}
+      cancel-in-progress: true
+
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
-
-      - name: Use latest NPM
-        run: sudo npm i -g npm
 
       - name: Install dependencies
         run: npm ci
@@ -47,8 +51,9 @@ jobs:
       # - name: Security audit
       # run: npm run security
 
-      - name: Check commit message
-        uses: wagoid/commitlint-github-action@v4
+      - name: Validate PR commits with commitlint
+        if: github.event_name == 'pull_request'
+        run: npx commitlint --from ${{ github.event.pull_request.head.sha }}~${{ github.event.pull_request.commits }} --to ${{ github.event.pull_request.head.sha }} --verbose
 
   test:
     name: Test - ${{ matrix.os }} - Node v${{ matrix.node-version }}, Webpack ${{ matrix.webpack-version }}
@@ -56,42 +61,39 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        node-version: [12.x, 14.x, 16.x, 17.x]
+        node-version: [18.x, 20.x, 22.x, 24.x]
         webpack-version: [latest]
 
     runs-on: ${{ matrix.os }}
+
+    concurrency:
+      group: test-${{ matrix.os }}-v${{ matrix.node-version }}-${{ matrix.webpack-version }}-${{ github.ref }}
+      cancel-in-progress: true
 
     steps:
       - name: Setup Git
         if: matrix.os == 'windows-latest'
         run: git config --global core.autocrlf input
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v5
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
-
-      - name: Use latest NPM on ubuntu/macos
-        if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
-        run: sudo npm i -g npm
-
-      - name: Use latest NPM on windows
-        if: matrix.os == 'windows-latest'
-        run: npm i -g npm
 
       - name: Install dependencies
         run: npm ci
 
       - name: Install webpack ${{ matrix.webpack-version }}
+        if: matrix.webpack-version != 'latest'
         run: npm i webpack@${{ matrix.webpack-version }}
 
       - name: Run tests for webpack version ${{ matrix.webpack-version }}
         run: npm run test:coverage -- --ci
 
       - name: Submit coverage data to codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

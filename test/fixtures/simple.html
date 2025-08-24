@@ -98,7 +98,7 @@ image.png 2x
   <input type="image" src="image.png" alt="Submit">
 </form>
 
-<script src="https://domain.org/script.js"></script>
+<script src="https://github.com/webpack-contrib/css-loader/blob/master/src/index.js"></script>
 
 <audio controls>
   <source src="example.ogg" type="audio/ogg">
@@ -448,3 +448,13 @@ ANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4
     <div class="will-not-be-parse"></div>
   </template>
 </div>
+
+<noscript>
+  <img src="./noscript.png" alt="noscript content" />
+</noscript>
+
+<img src="https://raw.githubusercontent.com/webpack-contrib/html-loader/master/test/fixtures/image.png">
+<img src="./😀abc.png" alt="Smiley face">
+<img src="😀abc.png" alt="Smiley face">
+<img srcset="😀abc.png 480w, image.png 800w" sizes="(max-width: 600px) 480px, 800px" src="image.png" alt="Elva dressed as a fairy">
+<img srcset="image.png 480w, 😀abc.png 800w" sizes="(max-width: 600px) 480px, 800px" src="image.png" alt="Elva dressed as a fairy">

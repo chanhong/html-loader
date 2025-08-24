@@ -1,7 +1,7 @@
-import path from "path";
+import path from "node:path";
 
+import { Volume, createFsFromVolume } from "memfs";
 import webpack from "webpack";
-import { createFsFromVolume, Volume } from "memfs";
 
 export default (fixture, loaderOptions = {}, config = {}) => {
   const fullConfig = {
@@ -16,7 +16,7 @@ export default (fixture, loaderOptions = {}, config = {}) => {
       chunkLoading: "require",
       publicPath: "/webpack/public/path/",
       library: "___TEST___",
-      assetModuleFilename: "[name][ext]",
+      assetModuleFilename: "[name]-[contenthash][ext]",
       hashFunction: "xxhash64",
     },
     module: {
@@ -54,7 +54,7 @@ export default (fixture, loaderOptions = {}, config = {}) => {
         aliasImg: path.resolve(__dirname, "../fixtures/image.png"),
         aliasImageWithSpace: path.resolve(
           __dirname,
-          "../fixtures/image image.png"
+          "../fixtures/image image.png",
         ),
       },
     },

@@ -2,6 +2,56 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.1.0](https://github.com/webpack-contrib/html-loader/compare/v5.0.0...v5.1.0) (2024-07-25)
+
+
+### Features
+
+* added the `postprocessor` option ([#518](https://github.com/webpack-contrib/html-loader/issues/518)) ([536a204](https://github.com/webpack-contrib/html-loader/commit/536a204696c655b500c4805db8e857ac28aab7ed))
+* reduce runtime code ([61f9a69](https://github.com/webpack-contrib/html-loader/commit/61f9a69a60196abdc85afaa8658faf7736cf08a9))
+* support absolute URLs and DataURI ([#519](https://github.com/webpack-contrib/html-loader/issues/519)) ([cc34b06](https://github.com/webpack-contrib/html-loader/commit/cc34b068accee66d2f8ef10fb03ed90b866395db))
+* using template literals in code when it supported ([#520](https://github.com/webpack-contrib/html-loader/issues/520)) ([6fa80d5](https://github.com/webpack-contrib/html-loader/commit/6fa80d51fed22613c39ffb240a0e875c9151b5b6))
+
+## [5.0.0](https://github.com/webpack-contrib/html-loader/compare/v4.2.0...v5.0.0) (2024-01-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* minimum supported Node.js version is `18.12.0` ([#504](https://github.com/webpack-contrib/html-loader/issues/504)) ([c82cfea](https://github.com/webpack-contrib/html-loader/commit/c82cfea0913aaf303d044c3a16f9b631dce5bc76))
+
+## [4.2.0](https://github.com/webpack-contrib/html-loader/compare/v4.1.0...v4.2.0) (2022-09-22)
+
+
+### Features
+
+* update html minifier ([#462](https://github.com/webpack-contrib/html-loader/issues/462)) ([27a6caf](https://github.com/webpack-contrib/html-loader/commit/27a6cafeabbfd506d7e2571ea5918dd8e8cb8d29))
+
+## [4.1.0](https://github.com/webpack-contrib/html-loader/compare/v4.0.0...v4.1.0) (2022-07-11)
+
+
+### Features
+
+* added the `scriptingEnabled` option ([#448](https://github.com/webpack-contrib/html-loader/issues/448)) ([6ed9f9c](https://github.com/webpack-contrib/html-loader/commit/6ed9f9c8df1e8ac2722bed01a9d28b660d64e744))
+
+### [4.0.0](https://github.com/webpack-contrib/html-loader/compare/v3.1.0...v4.0.0) (2022-06-15)
+
+### ⚠ BREAKING CHANGES
+
+* minimum supported `Node.js` version is `14.15.0`
+* update `parse5` to `7.0.0`
+
+
+### Bug Fixes
+
+* handle text with `<script>` in the `script` element ([#444](https://github.com/webpack-contrib/html-loader/issues/444)) ([9949d82](https://github.com/webpack-contrib/html-loader/commit/9949d825f5026951700a1f57c0d8a88970762a0a))
+
+## [3.1.0](https://github.com/webpack-contrib/html-loader/compare/v3.0.1...v3.1.0) (2022-01-08)
+
+
+### Features
+
+* add possibility to extend default minimize options ([#414](https://github.com/webpack-contrib/html-loader/issues/414)) ([0fa36af](https://github.com/webpack-contrib/html-loader/commit/0fa36af3950adecf49efc875694c327d0137347f))
+
 ### [3.0.1](https://github.com/webpack-contrib/html-loader/compare/v3.0.0...v3.0.1) (2021-11-02)
 
 

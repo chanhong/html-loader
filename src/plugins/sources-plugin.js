@@ -1,16 +1,22 @@
-import parse5 from "parse5";
+import { parse } from "parse5";
 
 import {
-  traverse,
   getFilter,
   requestify,
+  traverse,
   webpackIgnoreCommentRegexp,
 } from "../utils";
+
+const DOUBLE_QUOTE = '"'.charCodeAt(0);
+const SINGLE_QUOTE = "'".charCodeAt(0);
 
 export default (options) =>
   function process(html) {
     const sources = [];
-    const document = parse5.parse(html, { sourceCodeLocationInfo: true });
+    const document = parse(html, {
+      sourceCodeLocationInfo: true,
+      scriptingEnabled: options.sources.scriptingEnabled,
+    });
 
     let needIgnore = false;
 
@@ -36,7 +42,7 @@ export default (options) =>
         return;
       }
 
-      attributes.forEach((attribute) => {
+      for (const attribute of attributes) {
         let { name } = attribute;
 
         name = attribute.prefix ? `${attribute.prefix}:${name}` : name;
@@ -47,29 +53,31 @@ export default (options) =>
         ]);
 
         if (handlers.size === 0) {
-          return;
+          continue;
         }
 
         const handler = handlers.get(name.toLowerCase());
 
         if (!handler) {
-          return;
+          continue;
         }
 
         if (
           handler.filter &&
           !handler.filter(tagName, name, attributes, options.resourcePath)
         ) {
-          return;
+          continue;
         }
 
         const attributeAndValue = html.slice(
           sourceCodeLocation.attrs[name].startOffset,
-          sourceCodeLocation.attrs[name].endOffset
+          sourceCodeLocation.attrs[name].endOffset,
         );
         const isValueQuoted =
-          attributeAndValue[attributeAndValue.length - 1] === '"' ||
-          attributeAndValue[attributeAndValue.length - 1] === "'";
+          attributeAndValue.charCodeAt(attributeAndValue.length - 1) ===
+            DOUBLE_QUOTE ||
+          attributeAndValue.charCodeAt(attributeAndValue.length - 1) ===
+            SINGLE_QUOTE;
         const valueStartOffset =
           sourceCodeLocation.attrs[name].startOffset +
           attributeAndValue.indexOf(attribute.value);
@@ -86,8 +94,7 @@ export default (options) =>
                 startOffset: sourceCodeLocation.endTag.startOffset,
                 endOffset: sourceCodeLocation.endTag.endOffset,
               }
-            : // eslint-disable-next-line no-undefined
-              undefined,
+            : undefined,
           attributes,
           attribute: name,
           attributePrefix: attribute.prefix,
@@ -95,6 +102,8 @@ export default (options) =>
           attributeStartOffset: sourceCodeLocation.attrs[name].startOffset,
           attributeEndOffset: sourceCodeLocation.attrs[name].endOffset,
           value: attribute.value,
+          isSupportAbsoluteURL: options.isSupportAbsoluteURL,
+          isSupportDataURL: options.isSupportDataURL,
           isValueQuoted,
           valueEndOffset,
           valueStartOffset,
@@ -113,13 +122,12 @@ export default (options) =>
 
         for (const source of result) {
           if (!source) {
-            // eslint-disable-next-line no-continue
             continue;
           }
 
           sources.push({ ...source, name, isValueQuoted });
         }
-      });
+      }
     });
 
     const urlFilter = getFilter(options.sources.urlFilter);
@@ -129,20 +137,11 @@ export default (options) =>
     let offset = 0;
 
     for (const source of sources) {
-      const {
-        name,
-        value,
-        isValueQuoted,
-        format,
-        runtime,
-        startOffset,
-        endOffset,
-      } = source;
+      const { name, value, isValueQuoted, startOffset, endOffset } = source;
 
       let request = value;
 
       if (!urlFilter(name, value, options.resourcePath)) {
-        // eslint-disable-next-line no-continue
         continue;
       }
 
@@ -150,8 +149,8 @@ export default (options) =>
       const indexHash = request.lastIndexOf("#");
 
       if (indexHash >= 0) {
-        hash = request.substring(indexHash);
-        request = request.substring(0, indexHash);
+        hash = request.slice(Math.max(0, indexHash));
+        request = request.slice(0, Math.max(0, indexHash));
       }
 
       request = requestify(options.context, request);
@@ -162,7 +161,7 @@ export default (options) =>
         importName = `___HTML_LOADER_IMPORT_${imports.size}___`;
         imports.set(request, importName);
 
-        options.imports.push({ format, importName, request });
+        options.imports.push({ importName, request });
       }
 
       const replacementKey = JSON.stringify({ request, isValueQuoted, hash });
@@ -177,11 +176,9 @@ export default (options) =>
           importName,
           hash,
           isValueQuoted,
-          runtime,
         });
       }
 
-      // eslint-disable-next-line no-param-reassign
       html =
         html.slice(0, startOffset + offset) +
         replacementName +

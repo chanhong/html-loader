@@ -1,20 +1,25 @@
 {
   "name": "html-loader",
-  "version": "3.0.1",
+  "version": "5.1.0",
   "description": "Html loader module for webpack",
-  "license": "MIT",
-  "repository": "webpack-contrib/html-loader",
-  "author": "Tobias Koppers @sokra",
+  "keywords": [
+    "webpack",
+    "html",
+    "loader"
+  ],
   "homepage": "https://github.com/webpack-contrib/html-loader",
   "bugs": "https://github.com/webpack-contrib/html-loader/issues",
+  "repository": "webpack-contrib/html-loader",
   "funding": {
     "type": "opencollective",
     "url": "https://opencollective.com/webpack"
   },
+  "license": "MIT",
+  "author": "Tobias Koppers @sokra",
   "main": "dist/cjs.js",
-  "engines": {
-    "node": ">= 12.13.0"
-  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "start": "npm run build -- -w",
     "clean": "del-cli dist",
@@ -24,59 +29,68 @@
     "postbuild": "npm run validate:runtime",
     "commitlint": "commitlint --from=master",
     "security": "npm audit --production",
-    "lint:prettier": "prettier --list-different .",
+    "lint:prettier": "prettier --cache --list-different .",
     "lint:js": "eslint --cache .",
+    "lint:spelling": "cspell --cache --no-must-find-files --quiet \"**/*.*\"",
     "lint": "npm-run-all -l -p \"lint:**\"",
+    "fix:js": "npm run lint:js -- --fix",
+    "fix:prettier": "npm run lint:prettier -- --write",
+    "fix": "npm-run-all -l fix:js fix:prettier",
     "test:only": "cross-env NODE_ENV=test jest",
     "test:watch": "npm run test:only -- --watch",
     "test:coverage": "npm run test:only -- --coverage",
     "pretest": "npm run lint",
     "test": "npm run test:coverage",
-    "prepare": "husky install && npm run build",
+    "prepare": "husky && npm run build",
     "release": "standard-version"
   },
-  "files": [
-    "dist"
-  ],
+  "dependencies": {
+    "html-minifier-terser": "^7.2.0",
+    "parse5": "^7.1.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.24.8",
+    "@babel/core": "^7.25.2",
+    "@babel/preset-env": "^7.25.3",
+    "@commitlint/cli": "^19.3.0",
+    "@commitlint/config-conventional": "^19.2.2",
+    "@eslint/js": "^9.32.0",
+    "@eslint/markdown": "^7.1.0",
+    "@stylistic/eslint-plugin": "^5.2.2",
+    "babel-jest": "^30.0.0",
+    "cross-env": "^7.0.3",
+    "cspell": "^8.13.1",
+    "del": "^7.1.0",
+    "del-cli": "^5.1.0",
+    "es-check": "^9.1.4",
+    "eslint": "^9.31.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-config-webpack": "^4.4.2",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jest": "^29.0.1",
+    "eslint-plugin-n": "^17.21.0",
+    "eslint-plugin-prettier": "^5.5.3",
+    "eslint-plugin-unicorn": "^60.0.0",
+    "globals": "^16.3.0",
+    "handlebars": "^4.7.8",
+    "html-webpack-plugin": "^5.6.0",
+    "husky": "^9.1.4",
+    "jest": "^30.0.0",
+    "lint-staged": "^15.2.8",
+    "memfs": "^4.11.1",
+    "npm-run-all": "^4.1.5",
+    "posthtml": "^0.16.6",
+    "posthtml-webp": "^2.2.0",
+    "prettier": "^3.3.3",
+    "standard-version": "^9.5.0",
+    "typescript-eslint": "^8.38.0",
+    "unescape-unicode": "^0.2.0",
+    "webpack": "^5.93.0"
+  },
   "peerDependencies": {
     "webpack": "^5.0.0"
   },
-  "dependencies": {
-    "html-minifier-terser": "^6.0.2",
-    "parse5": "^6.0.1"
-  },
-  "devDependencies": {
-    "@babel/cli": "^7.14.5",
-    "@babel/core": "^7.14.6",
-    "@babel/preset-env": "^7.14.7",
-    "@commitlint/cli": "^14.1.0",
-    "@commitlint/config-conventional": "^14.1.0",
-    "@webpack-contrib/eslint-config-webpack": "^3.0.0",
-    "babel-jest": "^27.0.5",
-    "cross-env": "^7.0.3",
-    "del": "^6.0.0",
-    "del-cli": "^4.0.0",
-    "es-check": "^6.0.0",
-    "eslint": "^8.0.1",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-import": "^2.23.4",
-    "handlebars": "^4.7.7",
-    "html-webpack-plugin": "^5.3.2",
-    "husky": "^7.0.0",
-    "jest": "^27.0.5",
-    "lint-staged": "^11.0.0",
-    "memfs": "^3.2.2",
-    "npm-run-all": "^4.1.5",
-    "posthtml": "^0.16.4",
-    "posthtml-webp": "^2.1.0",
-    "prettier": "^2.3.1",
-    "standard-version": "^9.3.0",
-    "unescape-unicode": "^0.2.0",
-    "webpack": "^5.40.0"
-  },
-  "keywords": [
-    "webpack",
-    "html",
-    "loader"
-  ]
+  "engines": {
+    "node": ">= 18.12.0"
+  }
 }

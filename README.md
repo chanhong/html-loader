@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="200" height="200" src="https://worldvectorlogo.com/logos/html5.svg" alt="html-loader">
+  <img width="200" height="200" src="https://www.w3.org/html/logo/downloads/HTML5_Logo.svg" alt="html-loader">
   <a href="https://github.com/webpack/webpack">
     <img width="200" height="200" vspace="" hspace="25" src="https://webpack.js.org/assets/icon-square-big.svg" alt="webpack">
   </a>
@@ -7,10 +7,9 @@
 
 [![npm][npm]][npm-url]
 [![node][node]][node-url]
-[![deps][deps]][deps-url]
 [![tests][tests]][tests-url]
 [![coverage][cover]][cover-url]
-[![chat][chat]][chat-url]
+[![discussion][discussion]][discussion-url]
 [![size][size]][size-url]
 
 # html-loader
@@ -25,7 +24,19 @@ To begin, you'll need to install `html-loader`:
 npm install --save-dev html-loader
 ```
 
-Then add the plugin to your `webpack` config. For example:
+or
+
+```console
+yarn add -D html-loader
+```
+
+or
+
+```console
+pnpm add -D html-loader
+```
+
+Then add the loader to your `webpack` configuration. For example:
 
 **file.js**
 
@@ -50,49 +61,74 @@ module.exports = {
 
 ## Options
 
-|                Name                 |        Type         |                   Default                    | Description                                      |
-| :---------------------------------: | :-----------------: | :------------------------------------------: | :----------------------------------------------- |
-|      **[`sources`](#sources)**      | `{Boolean\|Object}` |                    `true`                    | Enables/Disables sources handling                |
-| **[`preprocessor`](#preprocessor)** |    `{Function}`     |                 `undefined`                  | Allows pre-processing of content before handling |
-|     **[`minimize`](#minimize)**     | `{Boolean\|Object}` | `true` in production mode, otherwise `false` | Tell `html-loader` to minimize HTML              |
-|     **[`esModule`](#esmodule)**     |     `{Boolean}`     |                    `true`                    | Enable/disable ES modules syntax                 |
+- **[`sources`](#sources)**
+- **[`preprocessor`](#preprocessor)**
+- **[`postprocessor`](#postprocessor)**
+- **[`minimize`](#minimize)**
+- **[`esModule`](#esmodule)**
 
 ### `sources`
 
-Type: `Boolean|Object`
+Type:
+
+```ts
+type sources =
+  | boolean
+  | {
+      list?: {
+        tag?: string;
+        attribute?: string;
+        type?: string;
+        filter?: (
+          tag: string,
+          attribute: string,
+          attributes: string,
+          resourcePath: string,
+        ) => boolean;
+      }[];
+      urlFilter?: (
+        attribute: string,
+        value: string,
+        resourcePath: string,
+      ) => boolean;
+      scriptingEnabled?: boolean;
+    };
+```
+
 Default: `true`
 
-By default every loadable attributes (for example - `<img src="image.png">`) is imported (`const img = require('./image.png')` or `import img from "./image.png""`).
+By default every loadable attribute (for example - `<img src="image.png">`) is imported (`const img = require('./image.png')` or `new URL("./image.png", import.meta.url)`).
 You may need to specify loaders for images in your configuration (recommended [`asset modules`](https://webpack.js.org/guides/asset-modules/)).
 
 Supported tags and attributes:
 
-- the `src` attribute of the `audio` tag
-- the `src` attribute of the `embed` tag
-- the `src` attribute of the `img` tag
-- the `srcset` attribute of the `img` tag
-- the `src` attribute of the `input` tag
-- the `data` attribute of the `object` tag
-- the `src` attribute of the `script` tag
-- the `href` attribute of the `script` tag
-- the `xlink:href` attribute of the `script` tag
-- the `src` attribute of the `source` tag
-- the `srcset` attribute of the `source` tag
-- the `src` attribute of the `track` tag
-- the `poster` attribute of the `video` tag
-- the `src` attribute of the `video` tag
-- the `xlink:href` attribute of the `image` tag
-- the `href` attribute of the `image` tag
-- the `xlink:href` attribute of the `use` tag
-- the `href` attribute of the `use` tag
-- the `href` attribute of the `link` tag when the `rel` attribute contains `stylesheet`, `icon`, `shortcut icon`, `mask-icon`, `apple-touch-icon`, `apple-touch-icon-precomposed`, `apple-touch-startup-image`, `manifest`, `prefetch`, `preload` or when the `itemprop` attribute is `image`, `logo`, `screenshot`, `thumbnailurl`, `contenturl`, `downloadurl`, `duringmedia`, `embedurl`, `installurl`, `layoutimage`
-- the `imagesrcset` attribute of the `link` tag when the `rel` attribute contains `stylesheet`, `icon`, `shortcut icon`, `mask-icon`, `apple-touch-icon`, `apple-touch-icon-precomposed`, `apple-touch-startup-image`, `manifest`, `prefetch`, `preload`
-- the `content` attribute of the `meta` tag when the `name` attribute is `msapplication-tileimage`, `msapplication-square70x70logo`, `msapplication-square150x150logo`, `msapplication-wide310x150logo`, `msapplication-square310x310logo`, `msapplication-config`, `twitter:image` or when the `property` attribute is `og:image`, `og:image:url`, `og:image:secure_url`, `og:audio`, `og:audio:secure_url`, `og:video`, `og:video:secure_url`, `vk:image` or when the `itemprop` attribute is `image`, `logo`, `screenshot`, `thumbnailurl`, `contenturl`, `downloadurl`, `duringmedia`, `embedurl`, `installurl`, `layoutimage`
-- the `icon-uri` value component in `content` attribute of the `meta` tag when the `name` attribute is `msapplication-task`
+- The `src` attribute of the `audio` tag
+- The `src` attribute of the `embed` tag
+- The `src` attribute of the `img` tag
+- The `srcset` attribute of the `img` tag
+- The `src` attribute of the `input` tag
+- The `data` attribute of the `object` tag
+- The `src` attribute of the `script` tag
+- The `href` attribute of the `script` tag
+- The `xlink:href` attribute of the `script` tag
+- The `src` attribute of the `source` tag
+- The `srcset` attribute of the `source` tag
+- The `src` attribute of the `track` tag
+- The `poster` attribute of the `video` tag
+- The `src` attribute of the `video` tag
+- The `xlink:href` attribute of the `image` tag
+- The `href` attribute of the `image` tag
+- The `xlink:href` attribute of the `use` tag
+- The `href` attribute of the `use` tag
+- The `href` attribute of the `link` tag when the `rel` attribute contains `stylesheet`, `icon`, `shortcut icon`, `mask-icon`, `apple-touch-icon`, `apple-touch-icon-precomposed`, `apple-touch-startup-image`, `manifest`, `prefetch`, `preload` or when the `itemprop` attribute is `image`, `logo`, `screenshot`, `thumbnailurl`, `contenturl`, `downloadurl`, `duringmedia`, `embedurl`, `installurl`, `layoutimage`
+- The `imagesrcset` attribute of the `link` tag when the `rel` attribute contains `stylesheet`, `icon`, `shortcut icon`, `mask-icon`, `apple-touch-icon`, `apple-touch-icon-precomposed`, `apple-touch-startup-image`, `manifest`, `prefetch`, `preload`
+- The `content` attribute of the `meta` tag when the `name` attribute is `msapplication-tileimage`, `msapplication-square70x70logo`, `msapplication-square150x150logo`, `msapplication-wide310x150logo`, `msapplication-square310x310logo`, `msapplication-config`, `twitter:image` or when the `property` attribute is `og:image`, `og:image:url`, `og:image:secure_url`, `og:audio`, `og:audio:secure_url`, `og:video`, `og:video:secure_url`, `vk:image` or when the `itemprop` attribute is `image`, `logo`, `screenshot`, `thumbnailurl`, `contenturl`, `downloadurl`, `duringmedia`, `embedurl`, `installurl`, `layoutimage`
+- The `icon-uri` value component in `content` attribute of the `meta` tag when the `name` attribute is `msapplication-task`
 
-#### `Boolean`
+#### `boolean`
 
-The `true` value enables processing of all default elements and attributes, the `false` disable processing of all attributes.
+- true: Enables processing of all default tags and attributes
+- false: Disables processing entirely
 
 **webpack.config.js**
 
@@ -113,9 +149,9 @@ module.exports = {
 };
 ```
 
-#### `Object`
+#### `object`
 
-Allows you to specify which tags and attributes to process, filter them, filter urls and process sources starts with `/`.
+Allows you to specify which tags and attributes to process, filter them, filter URLs and process sources starting with `/`.
 
 For example:
 
@@ -165,10 +201,25 @@ module.exports = {
 
 #### `list`
 
-Type: `Array`
+Type:
+
+```ts
+type list = {
+  tag?: string;
+  attribute?: string;
+  type?: string;
+  filter?: (
+    tag: string,
+    attribute: string,
+    attributes: string,
+    resourcePath: string,
+  ) => boolean;
+}[];
+```
+
 Default: [supported tags and attributes](#sources).
 
-Allows to setup which tags and attributes to process and how, and the ability to filter some of them.
+Allows to setup which tags and attributes to process and how, as well as the ability to filter some of them.
 
 Using `...` syntax allows you to extend [default supported tags and attributes](#sources).
 
@@ -241,7 +292,7 @@ module.exports = {
 
 If the tag name is not specified it will process all the tags.
 
-> You can use your custom filter to specify html elements to be processed.
+> You can use your custom filter to specify HTML elements to be processed.
 
 For example:
 
@@ -263,15 +314,14 @@ module.exports = {
                 // Type of processing, can be `src` or `scrset`
                 type: "src",
                 // Allow to filter some attributes (optional)
-                filter: (tag, attribute, attributes, resourcePath) => {
+                filter: (tag, attribute, attributes, resourcePath) =>
                   // The `tag` argument contains a name of the HTML tag.
                   // The `attribute` argument contains a name of the HTML attribute.
                   // The `attributes` argument contains all attributes of the tag.
                   // The `resourcePath` argument contains a path to the loaded HTML file.
 
                   // choose all HTML tags except img tag
-                  return tag.toLowerCase() !== "img";
-                },
+                  tag.toLowerCase() !== "img",
               },
             ],
           },
@@ -320,7 +370,9 @@ module.exports = {
 };
 ```
 
-**Note:** source with a `tag` option takes precedence over source without.
+> [!NOTE]
+>
+> source with a `tag` option takes precedence over source without.
 
 Filter can be used to disable default sources.
 
@@ -354,11 +406,20 @@ module.exports = {
 
 #### `urlFilter`
 
-Type: `Function`
+Type:
+
+```ts
+type urlFilter = (
+  attribute: string,
+  value: string,
+  resourcePath: string,
+) => boolean;
+```
+
 Default: `undefined`
 
-Allow to filter urls. All filtered urls will not be resolved (left in the code as they were written).
-All non requestable sources (for example `<img src="javascript:void(0)">`) do not handle by default.
+Allow to filter URLs. All filtered URLs will not be resolved (left in the code as they were written).
+Non-requestable sources (for example `<img src="javascript:void(0)">`) are not handled by default.
 
 ```js
 module.exports = {
@@ -388,14 +449,58 @@ module.exports = {
 };
 ```
 
+#### `scriptingEnabled`
+
+Type:
+
+```ts
+type scriptingEnabled = boolean;
+```
+
+Default: `true`
+
+By default, the parser in `html-loader` interprets content inside `<noscript>` tags as plain `#text`, so processing of content inside these tags will is ignored during processing.
+
+In order to enable processing inside `<noscript>` for content recognition by the parser as `#AST`, set this option to: `false`
+
+Additional information: [scriptingEnabled](https://parse5.js.org/interfaces/parse5.ParserOptions.html#scriptingEnabled)
+
+**webpack.config.js**
+
+```js
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.html$/i,
+        loader: "html-loader",
+        options: {
+          sources: {
+            // Enables processing inside the <noscript> tag
+            scriptingEnabled: false,
+          },
+        },
+      },
+    ],
+  },
+};
+```
+
 ### `preprocessor`
 
-Type: `Function`
+Type:
+
+```ts
+type preprocessor = (content: string, loaderContext: LoaderContext) => string;
+```
+
 Default: `undefined`
 
-Allows pre-processing of content before handling.
+Allows pre-processing of content before handling by the loader.
 
-> ⚠ You should always return valid HTML
+> [!WARNING]
+>
+> You should always return valid HTML.
 
 **file.hbs**
 
@@ -406,9 +511,9 @@ Allows pre-processing of content before handling.
 <div>
 ```
 
-#### `Function`
+#### `function`
 
-You can set the `preprocessor` option as a `Function` instance.
+You can set the `preprocessor` option as a `function` instance.
 
 **webpack.config.js**
 
@@ -484,14 +589,118 @@ module.exports = {
 };
 ```
 
+### `postprocessor`
+
+Type:
+
+```ts
+type postprocessor = (content: string, loaderContext: LoaderContext) => string;
+```
+
+Default: `undefined`
+
+Allows post-processing of content after replacing all attributes (like `src`/`srcset`/etc).
+
+**file.html**
+
+```html
+<img src="image.png" />
+<img src="<%= 'Hello ' + (1+1) %>" />
+<img src="<%= require('./image.png') %>" />
+<img src="<%= new URL('./image.png', import.meta.url) %>" />
+<div><%= require('./gallery.html').default %></div>
+```
+
+#### `function`
+
+You can set the `postprocessor` option as a `function` instance.
+
+**webpack.config.js**
+
+```js
+const Handlebars = require("handlebars");
+
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.html$/i,
+        loader: "html-loader",
+        options: {
+          postprocessor: (content, loaderContext) => {
+            // When you environment supports template literals (using browserslist or options) we will generate code using them
+            const isTemplateLiteralSupported = content[0] === "`";
+
+            return content
+              .replaceAll("<%=", isTemplateLiteralSupported ? "${" : '" +')
+              .replaceAll("%>", isTemplateLiteralSupported ? "}" : '+ "');
+          },
+        },
+      },
+    ],
+  },
+};
+```
+
+You can also set the `postprocessor` option as an asynchronous `function` instance.
+
+For example:
+
+**webpack.config.js**
+
+```js
+const Handlebars = require("handlebars");
+
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.hbs$/i,
+        loader: "html-loader",
+        options: {
+          postprocessor: async (content, loaderContext) => {
+            const value = await getValue();
+            // When you environment supports template literals (using browserslist or options) we will generate code using them
+            const isTemplateLiteralSupported = content[0] === "`";
+
+            return content
+              .replaceAll("<%=", isTemplateLiteralSupported ? "${" : '" +')
+              .replaceAll("%>", isTemplateLiteralSupported ? "}" : '+ "')
+              .replace("my-value", value);
+          },
+        },
+      },
+    ],
+  },
+};
+```
+
 ### `minimize`
 
-Type: `Boolean|Object`
+Type:
+
+```ts
+type minimize =
+  | boolean
+  | {
+      caseSensitive?: boolean;
+      collapseWhitespace?: boolean;
+      conservativeCollapse?: boolean;
+      keepClosingSlash?: boolean;
+      minifyCSS?: boolean;
+      minifyJS?: boolean;
+      removeComments?: boolean;
+      removeRedundantAttributes?: boolean;
+      removeScriptTypeAttributes?: boolean;
+      removeStyleLinkTypeAttributes?: boolean;
+    };
+```
+
 Default: `true` in production mode, otherwise `false`
 
-Tell `html-loader` to minimize HTML.
+Use this option to enable or customize HTML minimization with `html-loader`.
 
-#### `Boolean`
+#### `boolean`
 
 The enabled rules for minimizing by default are the following ones:
 
@@ -528,13 +737,13 @@ module.exports = {
 };
 ```
 
-#### `Object`
+#### `object`
 
 **webpack.config.js**
 
 See [html-minifier-terser](https://github.com/DanielRuf/html-minifier-terser)'s documentation for more information on the available options.
 
-The rules can be disabled using the following options in your `webpack.conf.js`
+The default rules can be overridden using the following options in your `webpack.config.js`
 
 **webpack.config.js**
 
@@ -557,15 +766,46 @@ module.exports = {
 };
 ```
 
+The default rules can be extended:
+
+**webpack.config.js**
+
+```js
+const { defaultMinimizerOptions } = require("html-loader");
+
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.html$/i,
+        loader: "html-loader",
+        options: {
+          minimize: {
+            ...defaultMinimizerOptions,
+            removeComments: false,
+            collapseWhitespace: false,
+          },
+        },
+      },
+    ],
+  },
+};
+```
+
 ### `esModule`
 
-Type: `Boolean`
+Type:
+
+```ts
+type esModule = boolean;
+```
+
 Default: `true`
 
 By default, `html-loader` generates JS modules that use the ES modules syntax.
-There are some cases in which using ES modules is beneficial, like in the case of [module concatenation](https://webpack.js.org/plugins/module-concatenation-plugin/) and [tree shaking](https://webpack.js.org/guides/tree-shaking/).
+There are some cases in which using ES modules is beneficial, such as [module concatenation](https://webpack.js.org/plugins/module-concatenation-plugin/) and [tree shaking](https://webpack.js.org/guides/tree-shaking/).
 
-You can enable a CommonJS modules syntax using:
+If you want to generate CommonJS modules instead (e.g., `module.exports =`), set:
 
 **webpack.config.js**
 
@@ -587,9 +827,9 @@ module.exports = {
 
 ## Examples
 
-### Disable url resolving using the `<!-- webpackIgnore: true -->` comment
+### Disable URL resolving using the `<!-- webpackIgnore: true -->` comment
 
-With `<!-- webpackIgnore: true -->` comment, can to disable sources handling for next tag.
+Use the `<!-- webpackIgnore: true -->` comment to prevent html-loader from processing URLs for the next HTML tag. This is useful when you don’t want Webpack to handle asset imports automatically.
 
 ```html
 <!-- Disabled url handling for the src attribute -->
@@ -615,7 +855,7 @@ With `<!-- webpackIgnore: true -->` comment, can to disable sources handling for
 
 ### roots
 
-With [`resolve.roots`](https://webpack.js.org/configuration/resolve/#resolveroots) can specify a list of directories where requests of server-relative URLs (starting with '/') are resolved.
+With [`resolve.roots`](https://webpack.js.org/configuration/resolve/#resolveroots) one can specify a list of directories where requests of server-relative URLs (starting with '/') are resolved.
 
 **webpack.config.js**
 
@@ -720,7 +960,7 @@ a {
 **file.html**
 
 ```html
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <meta charset="UTF-8" />
@@ -749,7 +989,7 @@ module.exports = {
       },
       {
         test: /\.html$/i,
-        use: ["extract-loader", "html-loader"],
+        use: ["html-loader"],
       },
       {
         test: /\.js$/i,
@@ -776,7 +1016,9 @@ module.exports = {
 
 ### Templating
 
-You can use any template system. Below is an example for [handlebars](https://handlebarsjs.com/).
+You can use any templating engine by leveraging the preprocessor option in html-loader. The preprocessor function receives the file content and the loader context, allowing you to transform the HTML before it’s processed by webpack.
+
+Below is an example for [handlebars](https://handlebarsjs.com/).
 
 **file.hbs**
 
@@ -822,9 +1064,12 @@ module.exports = {
 };
 ```
 
+This setup will transform the `file.hbs` template using Handlebars before passing the result to `html-loader`.
+
 ### PostHTML
 
-You can use [PostHTML](https://github.com/posthtml/posthtml) without any additional loaders.
+You can use [PostHTML](https://github.com/posthtml/posthtml) to transform HTML before it's processed, without needing additional loaders.
+This is useful for tasks like converting image formats, adding attributes, or restructuring markup.
 
 **file.html**
 
@@ -867,14 +1112,8 @@ module.exports = {
 
 ### Export into HTML files
 
-A very common scenario is exporting the HTML into their own _.html_ file, to
-serve them directly instead of injecting with javascript. This can be achieved
-with a combination of 2 loaders:
-
-- [extract-loader](https://github.com/peerigon/extract-loader)
-- html-loader
-
-and [`asset modules`](https://webpack.js.org/guides/asset-modules/)
+A very common scenario is exporting the HTML into their own _.html_ file, to serve them directly instead of injecting with javascript.
+This can be achieved with a combination of html-loader and [`asset modules`](https://webpack.js.org/guides/asset-modules/).
 
 The html-loader will parse the URLs, require the images and everything you
 expect. The extract loader will parse the javascript back into a proper html
@@ -899,7 +1138,7 @@ module.exports = {
       },
       {
         test: /\.html$/i,
-        use: ["extract-loader", "html-loader"],
+        use: ["html-loader"],
       },
     ],
   },
@@ -908,7 +1147,8 @@ module.exports = {
 
 ## Contributing
 
-Please take a moment to read our contributing guidelines if you haven't yet done so.
+We welcome all contributions!
+If you're new here, please take a moment to review our contributing guidelines before submitting issues or pull requests.
 
 [CONTRIBUTING](./.github/CONTRIBUTING.md)
 
@@ -920,13 +1160,11 @@ Please take a moment to read our contributing guidelines if you haven't yet done
 [npm-url]: https://npmjs.com/package/html-loader
 [node]: https://img.shields.io/node/v/html-loader.svg
 [node-url]: https://nodejs.org
-[deps]: https://david-dm.org/webpack-contrib/html-loader.svg
-[deps-url]: https://david-dm.org/webpack-contrib/html-loader
 [tests]: https://github.com/webpack-contrib/html-loader/workflows/html-loader/badge.svg
 [tests-url]: https://github.com/webpack-contrib/html-loader/actions
 [cover]: https://codecov.io/gh/webpack-contrib/html-loader/branch/master/graph/badge.svg
 [cover-url]: https://codecov.io/gh/webpack-contrib/html-loader
-[chat]: https://img.shields.io/badge/gitter-webpack%2Fwebpack-brightgreen.svg
-[chat-url]: https://gitter.im/webpack/webpack
+[discussion]: https://img.shields.io/github/discussions/webpack/webpack
+[discussion-url]: https://github.com/webpack/webpack/discussions
 [size]: https://packagephobia.now.sh/badge?p=html-loader
 [size-url]: https://packagephobia.now.sh/result?p=html-loader

@@ -1,4 +1,4 @@
-import { getCompiler, compile } from "./helpers";
+import { compile, getCompiler } from "./helpers";
 
 describe("validate options", () => {
   const tests = {
@@ -58,6 +58,8 @@ describe("validate options", () => {
           ],
         },
         { urlFilter: () => true },
+        { scriptingEnabled: true },
+        { scriptingEnabled: false },
         {
           list: [
             {
@@ -122,6 +124,7 @@ describe("validate options", () => {
           ],
         },
         { urlFilter: false },
+        { scriptingEnabled: "true" },
         { unknown: true },
       ],
     },

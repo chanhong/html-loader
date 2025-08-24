@@ -12,7 +12,7 @@ import {
   readAsset,
 } from "./helpers";
 
-describe("'process' option", () => {
+describe("'preprocess' option", () => {
   it('should work with the "preprocessor" option', async () => {
     const compiler = getCompiler("preprocessor.hbs", {
       preprocessor: (content, loaderContext) => {
@@ -23,8 +23,8 @@ describe("'process' option", () => {
 
         try {
           result = Handlebars.compile(content)({
-            firstname: "Alexander",
-            lastname: "Krasnoyarov",
+            firstname: "Firstname",
+            lastname: "Lastname",
           });
         } catch (error) {
           loaderContext.emitError(error);
@@ -38,16 +38,16 @@ describe("'process' option", () => {
     const stats = await compile(compiler);
 
     expect(getModuleSource("./preprocessor.hbs", stats)).toMatchSnapshot(
-      "module"
+      "module",
     );
     expect(
-      execute(readAsset("main.bundle.js", compiler, stats))
+      execute(readAsset("main.bundle.js", compiler, stats)),
     ).toMatchSnapshot("result");
     expect(getWarnings(stats)).toMatchSnapshot("warnings");
     expect(getErrors(stats)).toMatchSnapshot("errors");
   });
 
-  it('should work with Async "preprocessor" Function option', async () => {
+  it('should work with async "preprocessor" function option', async () => {
     const compiler = getCompiler("preprocessor.hbs", {
       preprocessor: async (content, loaderContext) => {
         await expect(typeof content).toBe("string");
@@ -57,8 +57,8 @@ describe("'process' option", () => {
 
         try {
           result = await Handlebars.compile(content)({
-            firstname: "Alexander",
-            lastname: "Krasnoyarov",
+            firstname: "Firstname",
+            lastname: "Lastname",
           });
         } catch (error) {
           await loaderContext.emitError(error);
@@ -72,10 +72,10 @@ describe("'process' option", () => {
     const stats = await compile(compiler);
 
     expect(getModuleSource("./preprocessor.hbs", stats)).toMatchSnapshot(
-      "module"
+      "module",
     );
     expect(
-      execute(readAsset("main.bundle.js", compiler, stats))
+      execute(readAsset("main.bundle.js", compiler, stats)),
     ).toMatchSnapshot("result");
     expect(getWarnings(stats)).toMatchSnapshot("warnings");
     expect(getErrors(stats)).toMatchSnapshot("errors");
@@ -105,12 +105,13 @@ describe("'process' option", () => {
 
     expect(getModuleSource("./posthtml.html", stats)).toMatchSnapshot("module");
     expect(
-      execute(readAsset("main.bundle.js", compiler, stats))
+      execute(readAsset("main.bundle.js", compiler, stats)),
     ).toMatchSnapshot("result");
     expect(getWarnings(stats)).toMatchSnapshot("warnings");
     expect(getErrors(stats)).toMatchSnapshot("errors");
   });
-  it('should work with the Async "preprocessor" Function option #2', async () => {
+
+  it('should work with the async "preprocessor" function option #2', async () => {
     const plugin = posthtmlWebp();
     const compiler = getCompiler("posthtml.html", {
       preprocessor: async (content, loaderContext) => {
@@ -136,7 +137,7 @@ describe("'process' option", () => {
 
     expect(getModuleSource("./posthtml.html", stats)).toMatchSnapshot("module");
     expect(
-      execute(readAsset("main.bundle.js", compiler, stats))
+      execute(readAsset("main.bundle.js", compiler, stats)),
     ).toMatchSnapshot("result");
     expect(getWarnings(stats)).toMatchSnapshot("warnings");
     expect(getErrors(stats)).toMatchSnapshot("errors");
